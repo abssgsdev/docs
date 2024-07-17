@@ -1,33 +1,173 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: 'Althena AI APIs'
+description: 'Documentation for Sensei and Andrea APIs'
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+# Althena AI APIs
 
-## Welcome
+This documentation covers two APIs provided by Althena AI: Sensei and Andrea.
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+## Sensei API
 
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+The Sensei API provides personalized guidance and recommendations based on user input.
 
-## Authentication
+### Endpoint
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+```
+POST https://api.althena.ai/sensei/guidance
+```
+
+### Authentication
+
+Authentication is required using a Bearer token.
+
+```
+Authorization: Bearer APIKEY
+```
+
+### Request Body
+
+| Parameter | Type   | Description                    |
+|-----------|--------|--------------------------------|
+| userText  | string | The user's input text          |
+| userId    | string | Unique identifier for the user |
+
+### Response
+
+A successful response will return a JSON object with the following structure:
 
 ```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
+{
+  "reasoning": string,
+  "guidance": string[],
+  "short_term_actions": string[],
+  "long_term_actions": string[],
+  "sensei_recommendations": [
+    {
+      "content_id": string,
+      "title": string,
+      "relevance_percentage": number,
+      "confidence_score": number,
+      "content_type": string,
+      "reasoning": string
+    }
+  ]
+}
 ```
+
+### Example Response
+
+```json
+{
+  "reasoning": "Given your history of anxiety and stress, and the current goal of job searching, we'll focus on strategies to manage interview-related anxiety and build confidence.",
+  "guidance": [
+    "Feeling overwhelmed and anxious before an interview is a common experience, especially for those with a history of anxiety. It's important to remember that your feelings are valid and that there are many ways to cope with these emotions. You've already taken a positive step by reaching out for support.",
+    "The key is to shift your focus from worry to preparation. By thoroughly researching the company and practicing your responses to common questions, you can build a sense of control and confidence. Remember, the interview is a two-way street – it's also an opportunity for you to assess if the company is a good fit for you. This perspective can help alleviate some of the pressure."
+  ],
+  "short_term_actions": [
+    "Practice relaxation techniques like deep breathing or meditation to calm your nerves before the interview.",
+    "Talk to a trusted friend or family member about how you're feeling. Sharing your concerns can often help lessen anxiety.",
+    "Visualize yourself succeeding in the interview. This positive imagery can help you feel more confident and prepared."
+  ],
+  "long_term_actions": [
+    "Consider seeking professional help if anxiety is a recurring issue in your life. Therapists can teach you coping mechanisms and strategies to manage stress and anxiety.",
+    "Incorporate regular relaxation practices into your daily routine. Exercise, yoga, or mindfulness can all help reduce stress and improve mental well-being.",
+    "Explore resources on interview preparation and career development. Continued learning and growth can enhance your overall confidence."
+  ],
+  "sensei_recommendations": [
+    {
+      "content_id": "98765",
+      "title": "Managing Interview Anxiety: A Guide for Job Seekers",
+      "relevance_percentage": 95,
+      "confidence_score": 0.92,
+      "content_type": "article",
+      "reasoning": "This article directly addresses interview anxiety and provides practical tips to help you cope with the stress."
+    },
+    {
+      "content_id": "43210",
+      "title": "Mindfulness Meditation for Stress Reduction",
+      "relevance_percentage": 88,
+      "confidence_score": 0.80,
+      "content_type": "guided_meditation",
+      "reasoning": "Mindfulness meditation can help you relax and focus, both before and during the interview."
+    },
+    {
+      "content_id": "55555",
+      "title": "The Power of Positive Self-Talk",
+      "relevance_percentage": 85,
+      "confidence_score": 0.75,
+      "content_type": "video",
+      "reasoning": "This video explores the importance of self-talk and provides techniques to reframe negative thoughts."
+    }
+  ]
+}
+```
+
+### Response Status Codes
+
+| Status Code | Description |
+|-------------|-------------|
+| 200         | Successful response |
+| 400         | Bad request (e.g., missing required parameters) |
+| 401         | Unauthorized (invalid API key) |
+| 500         | Internal server error |
+
+## Andrea API
+
+The Andrea API initiates a call to a user.
+
+### Endpoint
+
+```
+POST https://api.althena.ai/andrea/initiateCall
+```
+
+### Authentication
+
+Authentication is required using a Bearer token.
+
+```
+Authorization: Bearer {API-KEY}
+```
+
+### Request Body
+
+| Parameter | Type   | Description                    |
+|-----------|--------|--------------------------------|
+| userId    | string | Unique identifier for the user |
+| userPhone | string | User's phone number            |
+
+### Response
+
+A successful response will return a JSON object with the following structure:
+
+```json
+{
+  "callId": string,
+  "status": string,
+  "message": string,
+  "estimatedWaitTime": number,
+  "callbackUrl": string
+}
+```
+
+### Example Response
+
+```json
+{
+  "callId": "CALL_ID_1234567890",
+  "status": "initiated",
+  "message": "Call initiation successful",
+  "estimatedWaitTime": 5,  
+  "callbackUrl": "https://althena.ai/andrea/call_status_webhook"
+}
+```
+
+### Response Status Codes
+
+| Status Code | Description |
+|-------------|-------------|
+| 200         | Successful response |
+| 400         | Bad request (e.g., missing required parameters) |
+| 401         | Unauthorized (invalid API key) |
+| 500         | Internal server error |
